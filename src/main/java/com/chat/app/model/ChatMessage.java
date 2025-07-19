@@ -1,4 +1,4 @@
-package model;
+package com.chat.app.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
