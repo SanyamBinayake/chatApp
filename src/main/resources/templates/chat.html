@@ -26,48 +26,155 @@
             <button id="sendMessage" class="btn btn-primary">Send</button>
         </div>
     </div>
+
+    <div class="text-center mb-3">
+        <button class="btn btn-success" onclick="startVideoCall()">Start Video Call</button>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <h5>You</h5>
+            <video id="localVideo" autoplay muted style="width:100%; border:1px solid black;"></video>
+        </div>
+        <div class="col">
+            <h5>Remote</h5>
+            <video id="remoteVideo" autoplay style="width:100%; border:1px solid black;"></video>
+        </div>
+    </div>
+
 </div>
 </body>
 <script>
     let stompClient = null;
+    let localStream;
+    let peerConnection;
+    const peerId = Math.random().toString(36).substring(2);  // unique per tab
+    let isCaller = false;
+    const config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 
     function setConnected(connected){
-    document.getElementById('sendMessage').disabled =!connected;
+        document.getElementById('sendMessage').disabled = !connected;
     }
-    function connect(){
-    var socket=new SockJS('/chat');
-    stompClient=Stomp.over(socket);
-    stompClient.connect({},function(frame){
-        setConnected(true);
-        stompClient.subscribe('/topic/messages',function(message){
-            showMessage(JSON.parse(message.body));
-        })
+
+    function connect() {
+        const socket = new SockJS('/chat');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function () {
+            setConnected(true);
+
+            stompClient.subscribe('/topic/messages', function (message) {
+                showMessage(JSON.parse(message.body));
+            });
+
+            stompClient.subscribe('/topic/video', function (message) {
+                const signal = JSON.parse(message.body);
+
+                if (signal.sender === peerId) return; // ⛔ ignore own message
+
+                if (signal.type === 'offer') handleOffer(signal.offer);
+                else if (signal.type === 'answer') handleAnswer(signal.answer);
+                else if (signal.type === 'ice') handleIce(signal.candidate);
+            });
         });
     }
-        function showMessage(message){
-            var chat=document.getElementById('chat');
-            var messageElement=document.createElement('div');
-            messageElement.textContent=message.sender +' : ' + message.content;
-            messageElement.class="border-bottom mb-1";
-            chat.appendChild(messageElement);
-            chat.scrollTop=chat.scrollHeight;
-        }
 
-        function sendMessage(){
-               var sender=document.getElementById('senderInput').value;
-               var content=document.getElementById('messageInput').value;
-
-               var chatMessage={
-               sender:sender,
-               content:content
-               }
-
-
-        stompClient.send("/app/sendMessage",{},JSON.stringify(chatMessage));
-        document.getElementById('messageInput').value='';
+    function showMessage(message){
+        const chat = document.getElementById('chat');
+        const msgEl = document.createElement('div');
+        msgEl.textContent = `${message.sender} : ${message.content}`;
+        msgEl.className = "border-bottom mb-1";
+        chat.appendChild(msgEl);
+        chat.scrollTop = chat.scrollHeight;
     }
-    document.getElementById('sendMessage').onclick=sendMessage;
-    window.onload=connect;
-</script>
 
+    function sendMessage(){
+        const sender = document.getElementById('senderInput').value;
+        const content = document.getElementById('messageInput').value;
+
+        stompClient.send("/app/sendMessage", {}, JSON.stringify({ sender, content }));
+        document.getElementById('messageInput').value = '';
+    }
+
+    function startVideoCall() {
+        isCaller = true;
+
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+            document.getElementById('localVideo').srcObject = stream;
+            localStream = stream;
+
+            peerConnection = new RTCPeerConnection(config);
+
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+
+            peerConnection.ontrack = event => {
+                document.getElementById('remoteVideo').srcObject = event.streams[0];
+            };
+
+            peerConnection.onicecandidate = event => {
+                if (event.candidate) {
+                    stompClient.send("/app/video", {}, JSON.stringify({ type: "ice", candidate: event.candidate, sender: peerId }));
+                }
+            };
+
+            if (isCaller) {
+                peerConnection.createOffer()
+                    .then(offer => peerConnection.setLocalDescription(offer))
+                    .then(() => {
+                        stompClient.send("/app/video", {}, JSON.stringify({ type: "offer", offer: peerConnection.localDescription, sender: peerId }));
+                    });
+            }
+        });
+    }
+
+    function handleOffer(offer) {
+        isCaller = false;
+
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+            document.getElementById('localVideo').srcObject = stream;
+            localStream = stream;
+
+            peerConnection = new RTCPeerConnection(config);
+
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+
+            peerConnection.ontrack = event => {
+                document.getElementById('remoteVideo').srcObject = event.streams[0];
+            };
+
+            peerConnection.onicecandidate = event => {
+                if (event.candidate) {
+                    stompClient.send("/app/video", {}, JSON.stringify({ type: "ice", candidate: event.candidate, sender: peerId }));
+                }
+            };
+
+            return peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+        }).then(() => peerConnection.createAnswer())
+          .then(answer => peerConnection.setLocalDescription(answer))
+          .then(() => {
+              stompClient.send("/app/video", {}, JSON.stringify({ type: "answer", answer: peerConnection.localDescription, sender: peerId }));
+          })
+          .catch(e => console.error("handleOffer error:", e));
+    }
+
+    function handleAnswer(answer) {
+        console.log("Received answer, current state:", peerConnection.signalingState);
+
+        if (peerConnection.signalingState === "have-local-offer") {
+            peerConnection.setRemoteDescription(new RTCSessionDescription(answer))
+                .catch(e => console.error("setRemoteDescription(answer) failed:", e));
+        } else {
+            console.warn("⚠️ Skipping answer: state =", peerConnection.signalingState);
+        }
+    }
+
+    function handleIce(candidate) {
+        peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
+            .catch(e => console.error("Error adding ice candidate", e));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('sendMessage').onclick = sendMessage;
+        connect();
+    });
+</script>
 </html>

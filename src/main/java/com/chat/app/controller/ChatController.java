@@ -18,4 +18,10 @@ public class ChatController {
     public String chat(){
         return "chat";
     }
+
+    @MessageMapping("/video")
+    @SendTo("/topic/video")
+    public String handleVideoSignaling(String signal) {
+        return signal;
+    }
 }
