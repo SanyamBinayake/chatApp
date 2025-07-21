@@ -109,6 +109,7 @@ And make sure CORS is properly configured using `setAllowedOrigins("http://<clie
 |![Image](https://github.com/SanyamBinayake/chatApp/blob/3a63a579f05213a394f757cfa6fc0c93307acd28/Screenshot%20(163).png)|
 |![Image](https://github.com/SanyamBinayake/chatApp/blob/3a63a579f05213a394f757cfa6fc0c93307acd28/Screenshot%20(164).png)|
 |![Image](https://github.com/SanyamBinayake/chatApp/blob/3a63a579f05213a394f757cfa6fc0c93307acd28/Screenshot%20(165).png)|
+|![Image](https://github.com/SanyamBinayake/chatApp/blob/11241fc71c0af304effc4af9023091ba44dfd994/Screenshot%20(167).png)|
 
 
 
