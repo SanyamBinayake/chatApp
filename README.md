@@ -94,17 +94,29 @@ server.address=0.0.0.0
 
 ---
 
-## 📸 Screenshots
+| Chat UI |
+|--------|
+| ![187](https://github.com/SanyamBinayake/chatApp/blob/b46558c2487d04c43868ddac8816bc6f40be81f7/Screenshot%20(187).png?raw=true) |
+| ![188](https://github.com/SanyamBinayake/chatApp/blob/b46558c2487d04c43868ddac8816bc6f40be81f7/Screenshot%20(188).png?raw=true) |
+| ![189](https://github.com/SanyamBinayake/chatApp/blob/b46558c2487d04c43868ddac8816bc6f40be81f7/Screenshot%20(189).png?raw=true) |
+| ![190](https://github.com/SanyamBinayake/chatApp/blob/b46558c2487d04c43868ddac8816bc6f40be81f7/Screenshot%20(190).png?raw=true) |
+| ![184](https://github.com/SanyamBinayake/chatApp/blob/b46558c2487d04c43868ddac8816bc6f40be81f7/Screenshot%20(184).png?raw=true) |
+| ![185](https://github.com/SanyamBinayake/chatApp/blob/b46558c2487d04c43868ddac8816bc6f40be81f7/Screenshot%20(185).png?raw=true) |
+| ![186](https://github.com/SanyamBinayake/chatApp/blob/b46558c2487d04c43868ddac8816bc6f40be81f7/Screenshot%20(186).png?raw=true) |
+| ![191](https://github.com/SanyamBinayake/chatApp/blob/b46558c2487d04c43868ddac8816bc6f40be81f7/Screenshot%20(191).png?raw=true) |
 
-| Chat View                                                                                                             | Video Call View |
-| --------------------------------------------------------------------------------------------------------------------- | --------------- |
-| ![](https://github.com/SanyamBinayake/chatApp/blob/3a63a579f05213a394f757cfa6fc0c93307acd28/Screenshot%20\(162\).png) |                 |
-| ![](https://github.com/SanyamBinayake/chatApp/blob/3a63a579f05213a394f757cfa6fc0c93307acd28/Screenshot%20\(163\).png) |                 |
-| ![](https://github.com/SanyamBinayake/chatApp/blob/3a63a579f05213a394f757cfa6fc0c93307acd28/Screenshot%20\(164\).png) |                 |
-| ![](https://github.com/SanyamBinayake/chatApp/blob/3a63a579f05213a394f757cfa6fc0c93307acd28/Screenshot%20\(165\).png) |                 |
-| ![](https://github.com/SanyamBinayake/chatApp/blob/11241fc71c0af304effc4af9023091ba44dfd994/Screenshot%20\(167\).png) |                 |
 
----
+## 🎬 Sample Demo – Click Below to Watch
+
+<p align="center">
+  <a href="https://drive.google.com/file/d/15pZ8kQoz6Wq36gj-Ti1bqcH3Zpp8bCXr/view?usp=sharing" target="_blank">
+    <img src="https://github.com/SanyamBinayake/chatApp/blob/b46558c2487d04c43868ddac8816bc6f40be81f7/Screenshot%20(186).png?raw=true" alt="Watch Demo Video" width="720"/>
+  </a>
+</p>
+
+<p align="center">
+  ▶️ <b><a href="https://drive.google.com/file/d/15pZ8kQoz6Wq36gj-Ti1bqcH3Zpp8bCXr/view?usp=sharing">Click here to watch the video on Google Drive</a></b>
+</p>
 
 ## 🧪 Testing
 
